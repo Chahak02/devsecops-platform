@@ -40,7 +40,24 @@ pipeline {
         stage('Containerize') {
             steps {
                 echo 'Building Docker Images...'
-                // This is where Docker build/push will go in Phase 4
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
+                    script {
+                        // This fetches the Docker CLI we installed in Jenkins
+                        def dockerHome = tool 'docker'
+                        env.PATH = "${dockerHome}/bin:${env.PATH}"
+                    }
+                    
+                    // Securely login to Docker Hub
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    
+                    // Build the images
+                    sh 'docker build -t $DOCKER_USER/devsecops-backend:latest ./backend'
+                    sh 'docker build -t $DOCKER_USER/devsecops-frontend:latest ./frontend'
+                    
+                    // Push them to Docker Hub!
+                    sh 'docker push $DOCKER_USER/devsecops-backend:latest'
+                    sh 'docker push $DOCKER_USER/devsecops-frontend:latest'
+                }
             }
         }
 
