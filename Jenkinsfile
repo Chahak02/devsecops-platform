@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     tools {
-        // This must match the name you gave in Step 1
-        nodejs 'NodeJS 20' 
+        // This must match the name you gave in Jenkins
+        nodejs 'NodeJS 26' 
     }
 
     stages {
