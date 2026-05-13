@@ -57,7 +57,8 @@ app.post('/api/projects', async (req, res) => {
             await axios.post(`${JENKINS_URL}/job/${JOB_NAME}/build?token=${TOKEN}`, {}, {
                 auth: {
                     username: 'chahak', // <-- Change this if your username isn't 'admin'
-                    password: '110271c0537557939e8fa15f4441301e23' // <-- Paste the token here
+                    //password: '110271c0537557939e8fa15f4441301e23' // <-- Paste the token here
+                    password: '11abaa1d14da9cee881cfb2c6048c5771f'
                 }
             });
             console.log('Successfully triggered Jenkins pipeline!');

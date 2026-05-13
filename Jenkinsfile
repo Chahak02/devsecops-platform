@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo 'Checking out code from GitHub...'
-                // Later, we will add git checkout commands here
+                checkout scm // This tells Jenkins to pull from your GitHub repo!
             }
         }
         
@@ -26,8 +26,14 @@ pipeline {
 
         stage('Security Scan') {
             steps {
-                echo 'Running SonarCloud SAST Scan (Mock for now)...'
-                // This is where SonarCloud will go in Phase 3
+                echo 'Fetching SonarCloud Token from HashiCorp Vault...'
+                
+                // We securely fetch the token from Vault without hardcoding it!
+                withVault([configuration: [vaultUrl: 'http://devsecops-vault:8200', vaultCredentialId: 'vault-root-token'], vaultSecrets: [[path: 'secret/data/sonarcloud', secretValues: [[envVar: 'SONAR_TOKEN', vaultKey: 'token']]]]]) {
+                    echo "Running SonarCloud SAST Scan..."
+                    // We use npx to run the scanner so we don't have to install it globally
+                    sh 'npx sonar-scanner'
+                }
             }
         }
 
