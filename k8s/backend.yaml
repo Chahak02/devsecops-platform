@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: {{ docker_user }}/devsecops-backend:latest
+        image: __DOCKER_USER__/devsecops-backend:latest
         ports:
         - containerPort: 5000
         resources:
