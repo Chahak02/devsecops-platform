@@ -1,0 +1,16 @@
+---
+- name: Create Kubernetes namespace
+  command: kubectl create namespace devsecops-prod
+  ignore_errors: yes
+
+- name: Deploy Backend resources
+  shell: |
+    sed 's/{{ docker_user }}/{{ lookup("env", "DOCKER_USER") }}/g' k8s/backend.yaml | kubectl apply -n devsecops-prod -f -
+
+- name: Deploy Frontend resources
+  shell: |
+    sed 's/{{ docker_user }}/{{ lookup("env", "DOCKER_USER") }}/g' k8s/frontend.yaml | kubectl apply -n devsecops-prod -f -
+
+- name: Deploy Horizontal Pod Autoscalers
+  shell: |
+    sed 's/{{ docker_user }}/{{ lookup("env", "DOCKER_USER") }}/g' k8s/hpa.yaml | kubectl apply -n devsecops-prod -f -

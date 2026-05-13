@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devsecops-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devsecops-frontend
+  template:
+    metadata:
+      labels:
+        app: devsecops-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: {{ docker_user }}/devsecops-frontend:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: devsecops-frontend
+  ports:
+  - port: 80
+    targetPort: 80

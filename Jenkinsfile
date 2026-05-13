@@ -58,8 +58,10 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                echo 'Deploying to Minikube...'
-                // This is where kubectl commands will go
+                echo 'Deploying to Kubernetes using Ansible...'
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
+                    sh 'ansible-playbook ansible/playbook.yml'
+                }
             }
         }
     }
