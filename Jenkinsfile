@@ -29,7 +29,7 @@ pipeline {
                 echo 'Fetching SonarCloud Token from HashiCorp Vault...'
                 
                 // We securely fetch the token from Vault without hardcoding it!
-                withVault([configuration: [vaultUrl: 'http://devsecops-vault:8200', vaultCredentialId: 'vault-root-token'], vaultSecrets: [[path: 'secret/data/sonarcloud', secretValues: [[envVar: 'SONAR_TOKEN', vaultKey: 'token']]]]]) {
+                withVault([configuration: [vaultUrl: 'http://devsecops-vault:8200', vaultCredentialId: 'vault-root-token'], vaultSecrets: [[engineVersion: 2, path: 'secret/sonarcloud', secretValues: [[envVar: 'SONAR_TOKEN', vaultKey: 'token']]]]]) {
                     echo "Running SonarCloud SAST Scan..."
                     // We use npx to run the scanner so we don't have to install it globally
                     sh 'npx sonar-scanner'
