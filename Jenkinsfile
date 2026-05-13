@@ -47,8 +47,8 @@ pipeline {
                         env.PATH = "${dockerHome}/bin:${env.PATH}"
                     }
                     
-                    // Securely login to Docker Hub
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    // Securely login to Docker Hub (Jenkins automatically masks the password in the logs!)
+                    sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
                     
                     // Build the images
                     sh 'docker build -t $DOCKER_USER/devsecops-backend:latest ./backend'
