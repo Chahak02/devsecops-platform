@@ -41,11 +41,6 @@ pipeline {
             steps {
                 echo 'Building Docker Images...'
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
-                    script {
-                        // This fetches the Docker CLI we installed in Jenkins
-                        def dockerHome = tool 'docker'
-                        env.PATH = "${dockerHome}/bin:${env.PATH}"
-                    }
                     
                     // Securely login to Docker Hub (Jenkins automatically masks the password in the logs!)
                     sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
