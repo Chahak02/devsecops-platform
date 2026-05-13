@@ -5,12 +5,12 @@
 
 - name: Deploy Backend resources
   shell: |
-    sed 's/__DOCKER_USER__/{{ lookup("env", "DOCKER_USER") }}/g' k8s/backend.yaml | kubectl apply -n devsecops-prod -f -
+    sed 's/__DOCKER_USER__/{{ lookup("env", "DOCKER_USER") }}/g' {{ playbook_dir }}/../k8s/backend.yaml | kubectl apply -n devsecops-prod -f -
 
 - name: Deploy Frontend resources
   shell: |
-    sed 's/__DOCKER_USER__/{{ lookup("env", "DOCKER_USER") }}/g' k8s/frontend.yaml | kubectl apply -n devsecops-prod -f -
+    sed 's/__DOCKER_USER__/{{ lookup("env", "DOCKER_USER") }}/g' {{ playbook_dir }}/../k8s/frontend.yaml | kubectl apply -n devsecops-prod -f -
 
 - name: Deploy Horizontal Pod Autoscalers
   shell: |
-    sed 's/__DOCKER_USER__/{{ lookup("env", "DOCKER_USER") }}/g' k8s/hpa.yaml | kubectl apply -n devsecops-prod -f -
+    sed 's/__DOCKER_USER__/{{ lookup("env", "DOCKER_USER") }}/g' {{ playbook_dir }}/../k8s/hpa.yaml | kubectl apply -n devsecops-prod -f -
