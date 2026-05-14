@@ -1,0 +1,103 @@
+◇ injected env (1) from .env // tip: ⌘ suppress logs { quiet: true }
+🚀 Production backend running on http://localhost:5000
+✅ Connected to MongoDB
+🔄 Attempting to restore 11 project tunnels...
+🔌 Tunneled Doctor-Recommendation -> http://localhost:30002
+🔌 Tunneled calci -> http://localhost:30003
+🔌 Tunneled Calculator_app -> http://localhost:30004
+🔌 Tunneled sample-tenant-app -> http://localhost:30005
+🔌 Tunneled debug-project -> http://localhost:30008
+🔌 Tunneled debug-project-2 -> http://localhost:30009
+🔌 Tunneled test -> http://localhost:30010
+🔌 Tunneled my awesome-app -> http://localhost:30011
+🔌 Tunneled agja -> http://localhost:30012
+🔌 Tunneled calculator_app -> http://localhost:30013
+🔌 Tunneled Sync Success Project -> http://localhost:30014
+[0mGET /api/alerts [33m404[0m 1.035 ms - 149[0m
+[0mGET /api/health [32m200[0m 3.723 ms - 38[0m
+🔔 Jenkins Webhook Received: Project 6a04c17ce422f741ac64f775 -> Failed
+[0mPOST /api/webhook/jenkins [32m200[0m 47.810 ms - 41[0m
+[0mGET /api/alerts [33m404[0m 0.692 ms - 149[0m
+[0mGET /api/alerts [33m404[0m 0.455 ms - 149[0m
+🔔 Jenkins Webhook Received: Project 6a04c17ce422f741ac64f775 -> Failed
+[0mPOST /api/webhook/jenkins [32m200[0m 25.910 ms - 41[0m
+[0mGET /api/alerts [33m404[0m 0.372 ms - 149[0m
+[0mGET /api/alerts [33m404[0m 0.521 ms - 149[0m
+[0mGET /api/alerts [33m404[0m 0.283 ms - 149[0m
+[0mGET /api/alerts [33m404[0m 0.193 ms - 149[0m
+[0mGET /api/alerts [33m404[0m 0.170 ms - 149[0m
+🔔 Jenkins Webhook Received: Project 6a04c17ce422f741ac64f775 -> Deployed
+[0mPOST /api/webhook/jenkins [32m200[0m 81.742 ms - 41[0m
+[0mGET /api/alerts [33m404[0m 0.675 ms - 149[0m
+[0mGET /api/alerts [33m404[0m 0.292 ms - 149[0m
+[0mGET /api/alerts [33m404[0m 0.197 ms - 149[0m
+[0mGET /api/alerts [33m404[0m 0.733 ms - 149[0m
+[0mGET /api/alerts [33m404[0m 0.516 ms - 149[0m
+[0mGET /api/alerts [33m404[0m 0.391 ms - 149[0m
+[0mGET /api/alerts [33m404[0m 0.324 ms - 149[0m
+[0mGET /api/alerts [33m404[0m 0.314 ms - 149[0m
+[0mGET /api/projects [32m200[0m 66.834 ms - 738[0m
+[0mGET /api/projects [36m304[0m 9.410 ms - -[0m
+[0mGET /api/projects [36m304[0m 9.943 ms - -[0m
+[0mGET /api/projects [36m304[0m 5.796 ms - -[0m
+[0mGET /api/alerts [33m404[0m 0.560 ms - 149[0m
+[0mGET /api/alerts [33m404[0m 0.176 ms - 149[0m
+[0mGET /api/alerts [33m404[0m 0.202 ms - 149[0m
+[0mGET /api/projects [36m304[0m 31.707 ms - -[0m
+[0mGET /api/projects [36m304[0m 5.319 ms - -[0m
+[0mGET /api/projects [36m304[0m 5.255 ms - -[0m
+[0mGET /api/projects [36m304[0m 4.932 ms - -[0m
+[0mGET /api/projects [36m304[0m 34.862 ms - -[0m
+[0mGET /api/projects [36m304[0m 7.798 ms - -[0m
+[0mGET /api/projects [36m304[0m 12.616 ms - -[0m
+[0mGET /api/projects [36m304[0m 4.100 ms - -[0m
+[0mGET /api/stats [32m200[0m 117.789 ms - 856[0m
+[0mGET /api/stats [36m304[0m 10.133 ms - -[0m
+[0mGET /api/alerts [33m404[0m 1.173 ms - 149[0m
+[0mGET /api/projects [32m200[0m 10.934 ms - 2250[0m
+[0mGET /api/projects [36m304[0m 4.351 ms - -[0m
+[0mGET /api/projects [36m304[0m 49.197 ms - -[0m
+[0mGET /api/projects [36m304[0m 3.967 ms - -[0m
+[0mPOST /api/auth/login [32m200[0m 123.031 ms - 329[0m
+[0mGET /api/stats [32m200[0m 121.484 ms - 2368[0m
+[0mGET /api/stats [36m304[0m 27.292 ms - -[0m
+[0mGET /api/projects [36m304[0m 10.244 ms - -[0m
+[0mGET /api/projects [36m304[0m 7.746 ms - -[0m
+[0mGET /api/projects [36m304[0m 26.749 ms - -[0m
+[0mGET /api/projects [36m304[0m 9.305 ms - -[0m
+🗑️ Attempting to delete project: 6a05c114e75e85f8dfefc019 for user: 6a054fb6cc103414fd2805e3
+✅ Successfully deleted project: 6a05c114e75e85f8dfefc019
+[0mDELETE /api/projects/6a05c114e75e85f8dfefc019 [32m200[0m 71.776 ms - 42[0m
+🗑️ Attempting to delete project: 6a05e89440f2f98e4b22433a for user: 6a054fb6cc103414fd2805e3
+✅ Successfully deleted project: 6a05e89440f2f98e4b22433a
+[0mDELETE /api/projects/6a05e89440f2f98e4b22433a [32m200[0m 16.766 ms - 42[0m
+[0mGET /api/projects [32m200[0m 13.190 ms - 1231[0m
+[0mGET /api/projects [36m304[0m 2.893 ms - -[0m
+[0mGET /api/projects [36m304[0m 9.611 ms - -[0m
+[0mGET /api/projects [36m304[0m 2.189 ms - -[0m
+[0mGET /api/projects [36m304[0m 8.509 ms - -[0m
+[0mGET /api/projects [36m304[0m 3.855 ms - -[0m
+[0mGET /api/projects [36m304[0m 25.937 ms - -[0m
+[0mGET /api/projects [36m304[0m 7.679 ms - -[0m
+🗑️ Attempting to delete project: 6a058074a483b1141b1426cc for user: 6a054fb6cc103414fd2805e3
+✅ Successfully deleted project: 6a058074a483b1141b1426cc
+[0mDELETE /api/projects/6a058074a483b1141b1426cc [32m200[0m 23.115 ms - 42[0m
+[0mPOST /api/projects [32m201[0m 132.431 ms - 351[0m
+✅ IaC Provisioning success: pod/proj-8257e created
+service/svc-8257e exposed
+
+🚀 Tunnel opened on http://localhost:30015
+🔔 Jenkins Webhook Received: Project 6a0618dae28a8a741788257e -> Deployed
+[0mPOST /api/webhook/jenkins [32m200[0m 52.154 ms - 41[0m
+[0mGET /api/projects [32m200[0m 23.814 ms - 1071[0m
+[0mGET /api/projects [36m304[0m 13.563 ms - -[0m
+[0mGET /api/projects [36m304[0m 35.364 ms - -[0m
+[0mGET /api/projects [36m304[0m 6.317 ms - -[0m
+[0mGET /api/projects [36m304[0m 6.877 ms - -[0m
+[0mGET /api/projects [36m304[0m 7.552 ms - -[0m
+[0mGET /api/projects [36m304[0m 19.184 ms - -[0m
+[0mGET /api/projects [36m304[0m 3.572 ms - -[0m
+[0mGET /api/projects [36m304[0m 10.386 ms - -[0m
+[0mGET /api/projects [36m304[0m 4.542 ms - -[0m
+[0mGET /api/stats [32m200[0m 93.159 ms - 1189[0m
+[0mGET /api/stats [36m304[0m 15.596 ms - -[0m
