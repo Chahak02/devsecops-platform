@@ -1,8 +1,17 @@
-import React from 'react';
-import { Bell, Search, User } from 'lucide-react';
+import React, { useState } from 'react';
+import { Bell, Search, User, Settings, LogOut, ChevronDown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = () => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleNavigate = (path) => {
+    setDropdownOpen(false);
+    navigate(path);
+  };
+
   return (
     <header className="navbar glass-panel">
       <div className="search-bar">
@@ -14,7 +23,9 @@ const Navbar = () => {
           <Bell size={20} />
           <span className="badge-indicator"></span>
         </button>
-        <div className="user-profile">
+
+        {/* Clickable User Profile */}
+        <div className="user-profile" onClick={() => setDropdownOpen(!dropdownOpen)}>
           <div className="avatar">
             <User size={20} />
           </div>
@@ -22,7 +33,26 @@ const Navbar = () => {
             <span className="user-name">Admin User</span>
             <span className="user-role">DevOps Engineer</span>
           </div>
+          <ChevronDown size={16} className={`chevron ${dropdownOpen ? 'open' : ''}`} />
+
+          {/* Dropdown Menu */}
+          {dropdownOpen && (
+            <div className="profile-dropdown">
+              <button onClick={() => handleNavigate('/settings')}>
+                <Settings size={15} /> Settings
+              </button>
+              <div className="dropdown-divider" />
+              <button className="logout-btn" onClick={() => {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+              }}>
+                <LogOut size={15} /> Log Out
+              </button>
+            </div>
+          )}
         </div>
+
       </div>
     </header>
   );

@@ -1,0 +1,117 @@
+.security-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.security-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+  gap: 2rem;
+}
+
+.security-card {
+  padding: 1.5rem;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+}
+
+.scan-time {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.scan-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.scan-block {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.block-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
+
+.block-title h4 {
+  font-size: 0.9rem;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.status-pill.passed { background: #059669; color: white; }
+.status-pill.failed { background: #dc2626; color: white; }
+
+.stats-row {
+  display: flex;
+  gap: 20px;
+  font-size: 0.9rem;
+}
+
+.trivy-stats {
+  display: flex;
+  justify-content: space-between;
+}
+
+.severity-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.severity-item span {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.severity-item strong {
+  font-size: 1.2rem;
+}
+
+.severity-item.critical strong { color: #ef4444; }
+.severity-item.high strong { color: #f97316; }
+.severity-item.medium strong { color: #eab308; }
+
+.card-footer {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}

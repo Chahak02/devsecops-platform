@@ -1,0 +1,100 @@
+.console-wrapper {
+  background: #0f172a;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  height: calc(100vh - 250px);
+  display: flex;
+  flex-direction: column;
+}
+
+.console-header {
+  background: #1e293b;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.dots {
+  display: flex;
+  gap: 8px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.dot.red { background: #ff5f56; }
+.dot.yellow { background: #ffbd2e; }
+.dot.green { background: #27c93f; }
+
+.console-title {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.console-content {
+  padding: 20px;
+  overflow-y: auto;
+  flex-grow: 1;
+  font-family: 'Fira Code', 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.log-line {
+  display: flex;
+  gap: 20px;
+}
+
+.line-number {
+  color: #475569;
+  min-width: 30px;
+  text-align: right;
+  user-select: none;
+}
+
+.line-text {
+  color: #e2e8f0;
+}
+
+.line-text.stage {
+  color: #3b82f6;
+  font-weight: 700;
+}
+
+.line-text.success {
+  color: #10b981;
+  font-weight: 700;
+}
+
+.line-text.info {
+  color: #94a3b8;
+}
+
+.cursor {
+  display: inline-block;
+  width: 8px;
+  height: 18px;
+  background: #3b82f6;
+  margin-left: 5px;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.log-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.flex { display: flex; }
+.items-center { align-items: center; }
+.gap-2 { gap: 8px; }
