@@ -26,23 +26,22 @@ const Security = () => {
     }
   };
 
-  // Generate mock security data based on real projects for demonstration
-  // In a fully integrated system, the backend would return real SonarQube/Trivy results here
-  const securityData = projects.map((project, index) => ({
+  // Map the real security data from the project objects
+  const securityData = projects.map((project) => ({
     id: project._id,
     project: project.name,
-    sonarQube: { 
-      status: project.status === 'Failed' ? 'Failed' : 'Passed', 
-      bugs: index * 2, 
-      vulnerabilities: index % 2 === 0 ? 0 : 1, 
-      codeSmells: 12 + index * 5 
+    sonarQube: project.sonarResults || { 
+      status: 'N/A', 
+      bugs: 0, 
+      vulnerabilities: 0, 
+      codeSmells: 0 
     },
-    trivy: { 
-      critical: index % 3 === 0 ? 0 : 1, 
-      high: 2 + index, 
-      medium: 15 - index 
+    trivy: project.trivyResults || { 
+      critical: 0, 
+      high: 0, 
+      medium: 0 
     },
-    lastScan: project.lastBuild ? new Date(project.lastBuild).toLocaleTimeString() : 'Just now'
+    lastScan: project.lastBuild ? new Date(project.lastBuild).toLocaleTimeString() : 'Never'
   }));
 
   return (

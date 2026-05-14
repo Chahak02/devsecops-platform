@@ -5,23 +5,14 @@ grafana:
     auth.anonymous:
       enabled: true
       org_role: Admin
+    auth:
+      disable_login_form: true
+    server:
+      root_url: "%(protocol)s://%(domain)s:%(http_port)s/grafana/"
+      serve_from_sub_path: true
 
 prometheus:
   prometheusSpec:
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
     ruleSelectorNilUsesHelmValues: false
-    serviceMonitorSelector: {}
-    podMonitorSelector: {}
-    ruleSelector: {}
-
-kubelet:
-  enabled: true
-  serviceMonitor:
-    https: false # Use port 10255 (HTTP) instead of 10250 (HTTPS) to avoid 401
-    metricRelabelings:
-      - action: drop
-        regex: (csi_operations|storage_operation_duration)_seconds_bucket;(0.25|2.5|15|25|120|600)(\.0)?
-        sourceLabels:
-          - __name__
-          - le

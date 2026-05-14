@@ -64,7 +64,18 @@ const ProjectSchema = new mongoose.Schema({
     status: { type: String, default: 'Pending' },
     port: { type: Number },
     lastBuild: { type: Date, default: Date.now },
-    owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    sonarResults: {
+        status: { type: String, default: 'N/A' },
+        bugs: { type: Number, default: 0 },
+        vulnerabilities: { type: Number, default: 0 },
+        codeSmells: { type: Number, default: 0 }
+    },
+    trivyResults: {
+        critical: { type: Number, default: 0 },
+        high: { type: Number, default: 0 },
+        medium: { type: Number, default: 0 }
+    }
 });
 
 const User = mongoose.model('User', UserSchema);
@@ -83,6 +94,29 @@ const authenticateToken = (req, res, next) => {
         next();
     });
 };
+
+// --- Webhook for Jenkins Status Updates ---
+// Note: This endpoint is public for Jenkins but should be secured with a token in production
+app.post('/api/webhook/jenkins', async (req, res) => {
+    try {
+        const { projectId, status, sonar, trivy } = req.body;
+        console.log(`🔔 Jenkins Webhook Received: Project ${projectId} -> ${status}`);
+
+        const project = await Project.findById(projectId);
+        if (!project) return res.status(404).json({ message: 'Project not found' });
+
+        project.status = status;
+        project.lastBuild = new Date();
+        if (sonar) project.sonarResults = sonar;
+        if (trivy) project.trivyResults = trivy;
+
+        await project.save();
+        res.json({ message: 'Status updated successfully' });
+    } catch (error) {
+        console.error('Webhook error:', error.message);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
 // --- Auth Routes ---
 app.post('/api/auth/register', async (req, res) => {
@@ -154,12 +188,12 @@ app.post('/api/projects', authenticateToken, async (req, res) => {
             }
         });
 
-        // Trigger Jenkins Pipeline
+        // Trigger Jenkins Pipeline with PROJECT_ID
         const JENKINS_URL = 'http://localhost:8080';
         const JOB_NAME = 'DevSecOps-Pipeline';
         const TOKEN = 'devsecops_secret_token';
 
-        axios.post(`${JENKINS_URL}/job/${JOB_NAME}/build?token=${TOKEN}`, {}, {
+        axios.post(`${JENKINS_URL}/job/${JOB_NAME}/buildWithParameters?token=${TOKEN}&PROJECT_ID=${project._id}`, {}, {
             auth: {
                 username: 'chahak',
                 password: '11abaa1d14da9cee881cfb2c6048c5771f' // Your Jenkins API Token
