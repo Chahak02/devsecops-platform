@@ -272,36 +272,93 @@ app.get('/api/health', (req, res) => {
 });
 
 app.get('/api/monitoring/:projectName', async (req, res) => {
-
     try {
-
         const projectName = req.params.projectName;
 
         const memoryQuery =
-`container_memory_usage_bytes{namespace="devsecops-prod",pod=~"${projectName}.*"}`;
+            `container_memory_usage_bytes{namespace="devsecops-prod",pod=~"${projectName}.*"}`;
 
         const cpuQuery =
-`rate(container_cpu_usage_seconds_total{namespace="devsecops-prod",pod=~"${projectName}.*"}[5m])`;
+            `rate(container_cpu_usage_seconds_total{namespace="devsecops-prod",pod=~"${projectName}.*"}[1m])`;
 
-        const PROM_URL = 'http://localhost:9090/api/v1/query';
+        const memoryRes = await axios.get(
+            'http://localhost:9090/api/v1/query',
+            {
+                params: { query: memoryQuery }
+            }
+        );
 
-        const [memoryRes, cpuRes] = await Promise.all([
-            axios.get(PROM_URL, { params: { query: memoryQuery } }),
-            axios.get(PROM_URL, { params: { query: cpuQuery } })
-        ]);
+        const cpuRes = await axios.get(
+            'http://localhost:9090/api/v1/query',
+            {
+                params: { query: cpuQuery }
+            }
+        );
+
+        const memory =
+            memoryRes.data.data.result[0]?.value?.[1] || 0;
+
+        const cpu =
+            cpuRes.data.data.result[0]?.value?.[1] || 0;
 
         res.json({
-            memory: memoryRes.data,
-            cpu: cpuRes.data
+            project: projectName,
+            cpu: Number(cpu),
+            memory: Number(memory),
+            timestamp: new Date()
         });
 
     } catch (error) {
-
-        console.error(error.message);
+        console.error('Monitoring API error:', error.message);
 
         res.status(500).json({
             message: 'Monitoring fetch failed'
         });
     }
 });
+           
+
+// --- Dynamic Monitoring API ---
+app.get('/api/monitoring/:projectName', async (req, res) => {
+    try {
+        const projectName = req.params.projectName;
+
+        const memoryQuery =
+            `container_memory_usage_bytes{namespace="devsecops-prod",pod=~"${projectName}.*"}`;
+
+        const cpuQuery =
+            `rate(container_cpu_usage_seconds_total{namespace="devsecops-prod",pod=~"${projectName}.*"}[1m])`;
+
+        const memoryRes = await axios.get(
+            'http://localhost:9090/api/v1/query',
+            { params: { query: memoryQuery } }
+        );
+
+        const cpuRes = await axios.get(
+            'http://localhost:9090/api/v1/query',
+            { params: { query: cpuQuery } }
+        );
+
+        const memory =
+            memoryRes.data.data.result[0]?.value?.[1] || 0;
+
+        const cpu =
+            cpuRes.data.data.result[0]?.value?.[1] || 0;
+
+        res.json({
+            project: projectName,
+            cpu: Number(cpu),
+            memory: Number(memory),
+            timestamp: new Date()
+        });
+
+    } catch (error) {
+        console.error('Monitoring API error:', error.message);
+
+        res.status(500).json({
+            message: 'Monitoring fetch failed'
+        });
+    }
+});
+
 app.listen(PORT, () => console.log(`🚀 Production backend running on http://localhost:${PORT}`));

@@ -100,12 +100,12 @@ const Projects = () => {
                 <span className="meta-item">devsecops-prod</span>
               </div>
               <div className="project-actions">
-                <button 
-                  className="btn btn-secondary"
-                  onClick={() => navigate(`/monitoring?project=devsecops-prod`)}
-                >
-                  Monitoring
-                </button>
+                <button
+		  className="btn btn-secondary"
+		  onClick={() =>navigate(`/monitoring?project=proj-${project._id.slice(-5)}`)}
+		>
+  		  Monitoring
+		</button>
                 <button 
                   className="btn btn-secondary"
                   onClick={() => navigate(`/logs?project=${project.name}`)}

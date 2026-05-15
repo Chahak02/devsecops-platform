@@ -91,7 +91,9 @@ const Monitoring = () => {
                             setSelectedProjectId(e.target.value);
                             const p = projects.find(proj => proj._id === e.target.value);
                             if (p) {
-                                navigate(`/monitoring?project=${p.name}`, { replace: true });
+                                navigate(`/monitoring?project=proj-${p._id.slice(-5)}`, {
+  replace: true
+});
                             }
                         }}
                         style={{ background: 'transparent', color: '#fff', border: 'none', outline: 'none', cursor: 'pointer', fontSize: '1rem', fontWeight: 'bold' }}
