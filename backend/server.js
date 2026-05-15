@@ -321,5 +321,36 @@ app.get('/api/monitoring/:projectName', async (req, res) => {
         });
     }
 });
+
+app.get('/api/logs/:projectName', async (req, res) => {
+    try {
+
+        const projectName = req.params.projectName;
+
+        // Find real pod name
+        const podName = execSync(
+            `kubectl get pods -n devsecops-prod --no-headers -o custom-columns=":metadata.name" | grep "^${projectName}" | head -n 1`
+        ).toString().trim();
+
+        // Fetch latest logs
+        const logs = execSync(
+            `kubectl logs ${podName} -n devsecops-prod --tail=50 --timestamps=true`
+        ).toString();
+
+        res.json({
+            project: projectName,
+            podName,
+            logs
+        });
+
+    } catch (error) {
+
+        console.error('Logs API error:', error.message);
+
+        res.status(500).json({
+            message: 'Failed to fetch logs'
+        });
+    }
+});
            
 app.listen(PORT, () => console.log(`🚀 Production backend running on http://localhost:${PORT}`));

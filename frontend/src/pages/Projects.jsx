@@ -108,7 +108,7 @@ const Projects = () => {
 		</button>
                 <button 
                   className="btn btn-secondary"
-                  onClick={() => navigate(`/logs?project=${project.name}`)}
+                  onClick={() => navigate(`/logs?project=proj-${project._id.slice(-5)}`)}
                 >
                   Logs
                 </button>

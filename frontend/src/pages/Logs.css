@@ -9,6 +9,15 @@
   flex-direction: column;
 }
 
+.terminal-output {
+  color: #00ff9d;
+  font-family: monospace;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  line-height: 1.5;
+  padding: 1rem;
+}
+
 .console-header {
   background: #1e293b;
   padding: 10px 20px;
