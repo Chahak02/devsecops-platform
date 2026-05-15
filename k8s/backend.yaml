@@ -2,19 +2,27 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: devsecops-backend
+  labels:
+    app: devsecops-backend
+    tenant: devsecops-platform
+
 spec:
   replicas: 2
+
   selector:
     matchLabels:
       app: devsecops-backend
+
   template:
     metadata:
       labels:
         app: devsecops-backend
+        tenant: devsecops-platform
+
     spec:
       containers:
       - name: backend
-        image: __DOCKER_USER__/devsecops-backend:latest
+        image: chahak02/devsecops-backend:latest
         ports:
         - containerPort: 5000
         resources:

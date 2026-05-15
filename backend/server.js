@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const cors = require('cors');
+const fs = require('fs');
 const helmet = require('helmet');
 const morgan = require('morgan');
 
@@ -36,7 +37,7 @@ const restorePortForwards = async () => {
         console.log(`🔄 Attempting to restore ${projects.length} project tunnels...`);
         
         projects.forEach(project => {
-            const svcName = `svc-${project._id.toString().slice(-5)}`;
+            const svcName = `proj-${project._id.toString().slice(-5)}-service`;
             const pfCmd = `kubectl port-forward svc/${svcName} ${project.port}:80 -n devsecops-prod > /dev/null 2>&1 &`;
             
             exec(pfCmd, (err) => {
@@ -174,19 +175,40 @@ app.post('/api/projects', authenticateToken, async (req, res) => {
 
         // Infrastructure as Code: Automatically provision the Kubernetes Service for this project!
         const { exec } = require('child_process');
-        const deployCmd = `kubectl run proj-${project._id.toString().slice(-5)} --image=nginxdemos/hello --port=80 -n devsecops-prod && \
-                           kubectl expose pod proj-${project._id.toString().slice(-5)} --type=NodePort --port=80 --target-port=80 --name=svc-${project._id.toString().slice(-5)} -n devsecops-prod --overrides='{"spec":{"ports":[{"port":80,"protocol":"TCP","targetPort":80,"nodePort":${nextPort}}]}}'`;
+        const projectName = `proj-${project._id.toString().slice(-5)}`;
 
+let yaml = fs.readFileSync(
+  './templates/deployment-template.yaml',
+  'utf8'
+);
+
+yaml = yaml.replaceAll('{{PROJECT_NAME}}', projectName);
+
+const tempPath = `/tmp/${projectName}.yaml`;
+
+fs.writeFileSync(tempPath, yaml);
+
+const deployCmd = `kubectl apply -f ${tempPath} -n devsecops-prod`;
+                        
         exec(deployCmd, (err, stdout, stderr) => {
-            if (err) console.error('IaC Provisioning failed:', stderr);
-            else {
-                console.log('✅ IaC Provisioning success:', stdout);
-                // Automatically start a port-forward for the new service!
-                const pfCmd = `kubectl port-forward svc/svc-${project._id.toString().slice(-5)} ${nextPort}:80 -n devsecops-prod &`;
-                exec(pfCmd);
-                console.log(`🚀 Tunnel opened on http://localhost:${nextPort}`);
-            }
-        });
+
+    if (err) {
+        console.error('❌ IaC Provisioning failed');
+        console.error('ERROR:', err);
+        console.error('STDERR:', stderr);
+    } else {
+
+        console.log('✅ IaC Provisioning success');
+        console.log(stdout);
+
+        const pfCmd =
+          `kubectl port-forward svc/${projectName}-service ${nextPort}:80 -n devsecops-prod &`;
+
+        exec(pfCmd);
+
+        console.log(`🚀 Tunnel opened on http://localhost:${nextPort}`);
+    }
+});
 
         // Trigger Jenkins Pipeline with PROJECT_ID
         const JENKINS_URL = 'http://localhost:8080';
@@ -249,4 +271,37 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected' });
 });
 
+app.get('/api/monitoring/:projectName', async (req, res) => {
+
+    try {
+
+        const projectName = req.params.projectName;
+
+        const memoryQuery =
+`container_memory_usage_bytes{namespace="devsecops-prod",pod=~"${projectName}.*"}`;
+
+        const cpuQuery =
+`rate(container_cpu_usage_seconds_total{namespace="devsecops-prod",pod=~"${projectName}.*"}[5m])`;
+
+        const PROM_URL = 'http://localhost:9090/api/v1/query';
+
+        const [memoryRes, cpuRes] = await Promise.all([
+            axios.get(PROM_URL, { params: { query: memoryQuery } }),
+            axios.get(PROM_URL, { params: { query: cpuQuery } })
+        ]);
+
+        res.json({
+            memory: memoryRes.data,
+            cpu: cpuRes.data
+        });
+
+    } catch (error) {
+
+        console.error(error.message);
+
+        res.status(500).json({
+            message: 'Monitoring fetch failed'
+        });
+    }
+});
 app.listen(PORT, () => console.log(`🚀 Production backend running on http://localhost:${PORT}`));

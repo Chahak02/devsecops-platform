@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: devsecops-frontend
+  labels:
+    app: devsecops-frontend
+    tenant: devsecops-platform
 spec:
   replicas: 2
   selector:
@@ -11,10 +14,11 @@ spec:
     metadata:
       labels:
         app: devsecops-frontend
+        tenant: devsecops-platform
     spec:
       containers:
       - name: frontend
-        image: __DOCKER_USER__/devsecops-frontend:latest
+        image: chahak02/devsecops-frontend:latest
         ports:
         - containerPort: 80
         resources:

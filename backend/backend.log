@@ -119,3 +119,67 @@ service/svc-8257e exposed
 [0mGET /api/projects [36m304[0m 3.787 ms - -[0m
 [0mGET /api/projects [36m304[0m 776.941 ms - -[0m
 [0mGET /api/projects [36m304[0m 4.247 ms - -[0m
+[0mGET /api/projects [33m403[0m 16.964 ms - 39[0m
+[0mGET /api/projects [33m403[0m 1.083 ms - 39[0m
+[0mGET /api/projects [33m403[0m 4.054 ms - 39[0m
+[0mGET /api/projects [33m403[0m 1.715 ms - 39[0m
+[0mGET /api/projects [33m403[0m 2.389 ms - 39[0m
+[0mGET /api/projects [33m403[0m 2.500 ms - 39[0m
+[0mGET /api/projects [33m403[0m 1.849 ms - 39[0m
+[0mGET /api/projects [33m403[0m 1.333 ms - 39[0m
+[0mGET /api/stats [33m403[0m 3.095 ms - 39[0m
+[0mGET /api/stats [33m403[0m 1.601 ms - 39[0m
+[0mGET /api/projects [33m403[0m 4.951 ms - 39[0m
+[0mGET /api/projects [33m403[0m 1.543 ms - 39[0m
+[0mPOST /api/auth/login [32m200[0m 189.352 ms - 329[0m
+[0mGET /api/stats [32m200[0m 194.901 ms - 1189[0m
+[0mGET /api/stats [36m304[0m 31.825 ms - -[0m
+[0mGET /api/projects [32m200[0m 15.147 ms - 1071[0m
+[0mGET /api/projects [36m304[0m 6.483 ms - -[0m
+[0mGET /api/projects [36m304[0m 14.411 ms - -[0m
+[0mGET /api/projects [36m304[0m 7.445 ms - -[0m
+[0mGET /api/projects [36m304[0m 10.654 ms - -[0m
+[0mGET /api/projects [36m304[0m 9.304 ms - -[0m
+[0mGET /api/stats [36m304[0m 19.676 ms - -[0m
+[0mGET /api/stats [36m304[0m 10.775 ms - -[0m
+[0mGET /api/projects [36m304[0m 39.851 ms - -[0m
+[0mGET /api/projects [36m304[0m 7.395 ms - -[0m
+[0mGET /api/stats [36m304[0m 34.246 ms - -[0m
+[0mGET /api/stats [36m304[0m 24.361 ms - -[0m
+[0mGET /api/projects [36m304[0m 13.425 ms - -[0m
+[0mGET /api/projects [36m304[0m 7.964 ms - -[0m
+[0mGET /api/projects [36m304[0m 10.482 ms - -[0m
+[0mGET /api/projects [36m304[0m 2.995 ms - -[0m
+[0mGET /api/projects [36m304[0m 28.159 ms - -[0m
+[0mGET /api/projects [36m304[0m 6.044 ms - -[0m
+[0mGET /api/stats [36m304[0m 103.511 ms - -[0m
+[0mGET /api/stats [36m304[0m 8.546 ms - -[0m
+[0mGET /api/projects [36m304[0m 4.735 ms - -[0m
+[0mGET /api/projects [36m304[0m 4.752 ms - -[0m
+[0mGET /api/stats [36m304[0m 18.376 ms - -[0m
+[0mGET /api/stats [36m304[0m 11.258 ms - -[0m
+[0mGET /api/projects [36m304[0m 24.625 ms - -[0m
+[0mGET /api/projects [36m304[0m 4.709 ms - -[0m
+[0mPOST /api/projects [32m201[0m 41.067 ms - 355[0m
+✅ IaC Provisioning success: pod/proj-8257f created
+service/svc-8257f exposed
+
+🚀 Tunnel opened on http://localhost:30016
+🔔 Jenkins Webhook Received: Project 6a06a006e28a8a741788257f -> Deployed
+[0mPOST /api/webhook/jenkins [32m200[0m 66.084 ms - 41[0m
+[0mGET /api/stats [33m403[0m 2.976 ms - 39[0m
+[0mGET /api/stats [33m403[0m 0.580 ms - 39[0m
+[0mPOST /api/auth/login [32m200[0m 116.605 ms - 329[0m
+[0mGET /api/stats [32m200[0m 139.140 ms - 1549[0m
+[0mGET /api/stats [36m304[0m 5.758 ms - -[0m
+[0mGET /api/projects [32m200[0m 25.291 ms - 1431[0m
+[0mGET /api/projects [36m304[0m 8.239 ms - -[0m
+[0mGET /api/projects [36m304[0m 8.741 ms - -[0m
+[0mGET /api/projects [36m304[0m 4.644 ms - -[0m
+[0mPOST /api/projects [32m201[0m 37.138 ms - 360[0m
+✅ IaC Provisioning success: pod/proj-82580 created
+service/svc-82580 exposed
+
+🚀 Tunnel opened on http://localhost:30017
+🔔 Jenkins Webhook Received: Project 6a06a25be28a8a7417882580 -> Deployed
+[0mPOST /api/webhook/jenkins [32m200[0m 47.603 ms - 41[0m
