@@ -14,6 +14,7 @@ const Monitoring = () => {
     
     const initialProject = searchParams.get('project');
     const [selectedProjectId, setSelectedProjectId] = useState(null);
+    const [selectedProjectName, setSelectedProjectName] = useState('');
 
     const fetchProjects = async () => {
         try {
@@ -29,8 +30,14 @@ const Monitoring = () => {
                 const matchedProject = fetchedProjects.find(p => p.name === initialProject);
                 if (matchedProject) {
                     setSelectedProjectId(matchedProject._id);
+		    setSelectedProjectName(
+  			 `proj-${matchedProject._id.slice(-5)}`
+		);
                 } else {
                     setSelectedProjectId(fetchedProjects[0]._id);
+		    setSelectedProjectName(
+  			 `proj-${fetchedProjects[0]._id.slice(-5)}`
+		    );
                 }
             }
             setLoading(false);
@@ -103,8 +110,12 @@ useEffect(() => {
 
     // Append a variable to the Grafana URL so it isolates data per project (assuming Grafana is configured with variables like var-namespace or var-pod)
     // We use var-project to make it generic for the demo, which makes the iframe reload and look distinct for each project.
-    const grafanaUrl = `http://localhost:3000/d/7d57716318ee0dddbac5a7f451fb7753/node-exporter-nodes?orgId=1&refresh=10s&kiosk&var-project=${selectedProject.name}`;
-
+    //const grafanaUrl = `http://localhost:3000/d/7d57716318ee0dddbac5a7f451fb7753/node-exporter-nodes?orgId=1&refresh=10s&kiosk&var-project=${selectedProject.name}`;
+	
+    const grafanaUrl =
+    metrics?.podName
+    ? `http://localhost:3000/grafana/d/6581e46e4e5c7ba40a07646395ef7b23/kubernetes-compute-resources-pod?orgId=1&var-datasource=default&var-namespace=devsecops-prod&var-pod=${metrics.podName}&refresh=10s&kiosk`
+    : '';
     return (
         <div className="monitoring-container">
             <div className="monitoring-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -120,14 +131,29 @@ useEffect(() => {
                     <select 
                         value={selectedProjectId || ''} 
                         onChange={(e) => {
-                            setSelectedProjectId(e.target.value);
-                            const p = projects.find(proj => proj._id === e.target.value);
-                            if (p) {
-                                navigate(`/monitoring?project=proj-${p._id.slice(-5)}`, {
-  replace: true
-});
-                            }
-                        }}
+
+    const selectedId = e.target.value;
+
+    setSelectedProjectId(selectedId);
+
+    setSelectedProjectName(
+        `proj-${selectedId.slice(-5)}`
+    );
+
+    const p = projects.find(
+        proj => proj._id === selectedId
+    );
+
+    if (p) {
+
+        navigate(
+            `/monitoring?project=proj-${p._id.slice(-5)}`,
+            {
+                replace: true
+            }
+        );
+    }
+}}
                         style={{ background: 'transparent', color: '#fff', border: 'none', outline: 'none', cursor: 'pointer', fontSize: '1rem', fontWeight: 'bold' }}
                     >
                         {projects.map(p => (

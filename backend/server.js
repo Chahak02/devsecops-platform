@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { execSync } = require('child_process');
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
@@ -274,12 +275,15 @@ app.get('/api/health', (req, res) => {
 app.get('/api/monitoring/:projectName', async (req, res) => {
     try {
         const projectName = req.params.projectName;
+        const podName = execSync(
+            `kubectl get pods -n devsecops-prod --no-headers -o custom-columns=":metadata.name" | grep "^${projectName}-"`
+        ).toString().trim().split('\n')[0];
 
         const memoryQuery =
-            `container_memory_usage_bytes{namespace="devsecops-prod",pod=~"${projectName}.*"}`;
+            `container_memory_usage_bytes{namespace="devsecops-prod",pod="${podName}"}`;
 
         const cpuQuery =
-            `rate(container_cpu_usage_seconds_total{namespace="devsecops-prod",pod=~"${projectName}.*"}[1m])`;
+            `rate(container_cpu_usage_seconds_total{namespace="devsecops-prod",pod="${podName}"}[1m])`;
 
         const memoryRes = await axios.get(
             'http://localhost:9090/api/v1/query',
@@ -301,12 +305,13 @@ app.get('/api/monitoring/:projectName', async (req, res) => {
         const cpu =
             cpuRes.data.data.result[0]?.value?.[1] || 0;
 
-        res.json({
-            project: projectName,
-            cpu: Number(cpu),
-            memory: Number(memory),
-            timestamp: new Date()
-        });
+            res.json({
+                project: projectName,
+                podName,
+                cpu: Number(cpu),
+                memory: Number(memory),
+                timestamp: new Date()
+            });
 
     } catch (error) {
         console.error('Monitoring API error:', error.message);
@@ -317,48 +322,4 @@ app.get('/api/monitoring/:projectName', async (req, res) => {
     }
 });
            
-
-// --- Dynamic Monitoring API ---
-app.get('/api/monitoring/:projectName', async (req, res) => {
-    try {
-        const projectName = req.params.projectName;
-
-        const memoryQuery =
-            `container_memory_usage_bytes{namespace="devsecops-prod",pod=~"${projectName}.*"}`;
-
-        const cpuQuery =
-            `rate(container_cpu_usage_seconds_total{namespace="devsecops-prod",pod=~"${projectName}.*"}[1m])`;
-
-        const memoryRes = await axios.get(
-            'http://localhost:9090/api/v1/query',
-            { params: { query: memoryQuery } }
-        );
-
-        const cpuRes = await axios.get(
-            'http://localhost:9090/api/v1/query',
-            { params: { query: cpuQuery } }
-        );
-
-        const memory =
-            memoryRes.data.data.result[0]?.value?.[1] || 0;
-
-        const cpu =
-            cpuRes.data.data.result[0]?.value?.[1] || 0;
-
-        res.json({
-            project: projectName,
-            cpu: Number(cpu),
-            memory: Number(memory),
-            timestamp: new Date()
-        });
-
-    } catch (error) {
-        console.error('Monitoring API error:', error.message);
-
-        res.status(500).json({
-            message: 'Monitoring fetch failed'
-        });
-    }
-});
-
 app.listen(PORT, () => console.log(`🚀 Production backend running on http://localhost:${PORT}`));
