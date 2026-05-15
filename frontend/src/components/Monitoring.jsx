@@ -10,13 +10,10 @@ const Monitoring = () => {
     
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [metrics, setMetrics] = useState(null);
     
     const initialProject = searchParams.get('project');
     const [selectedProjectId, setSelectedProjectId] = useState(null);
-
-    useEffect(() => {
-        fetchProjects();
-    }, []);
 
     const fetchProjects = async () => {
         try {
@@ -43,6 +40,41 @@ const Monitoring = () => {
             setLoading(false);
         }
     };
+    
+    const fetchMetrics = async (projectId) => {
+
+    try {
+
+        const res = await axios.get(
+            `http://localhost:5000/api/monitoring/proj-${projectId.slice(-5)}`
+        );
+
+        setMetrics(res.data);
+
+    } catch (error) {
+
+        console.error('Monitoring fetch failed:', error);
+    }
+};
+
+useEffect(() => {
+        fetchProjects();
+    }, []);
+
+useEffect(() => {
+
+    if (selectedProjectId) {
+
+        fetchMetrics(selectedProjectId);
+
+        const interval = setInterval(() => {
+            fetchMetrics(selectedProjectId);
+        }, 5000);
+
+        return () => clearInterval(interval);
+    }
+
+}, [selectedProjectId]);
 
     if (loading) {
         return (
@@ -106,7 +138,32 @@ const Monitoring = () => {
                     </select>
                 </div>
             </div>
-            
+            <div
+  style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+    gap: '1rem',
+    marginBottom: '1.5rem'
+  }}
+>
+
+  <div className="metric-card">
+    <h3>Project</h3>
+    <p>{metrics?.project || 'Loading...'}</p>
+  </div>
+
+  <div className="metric-card">
+    <h3>CPU Usage</h3>
+    <p>{metrics?.cpu?.toFixed(4) || 0}</p>
+  </div>
+
+  <div className="metric-card">
+    <h3>Memory Usage</h3>
+    <p>{metrics?.memory || 0} bytes</p>
+  </div>
+
+</div>
+
             <div className="iframe-wrapper" style={{ border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', overflow: 'hidden' }}>
                 <iframe 
                     key={selectedProject._id} // Force iframe to reload when project changes
