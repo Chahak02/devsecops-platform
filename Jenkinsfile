@@ -128,9 +128,9 @@ stage('Trivy Image Scan') {
 
             echo 'Deploying application to Kubernetes...'
 
-            sh 'kubectl apply -f backend.yaml'
-            sh 'kubectl apply -f frontend.yaml'
-            sh 'kubectl apply -f hpa.yaml'
+            sh 'kubectl apply -f k8s/backend.yaml'
+            sh 'kubectl apply -f k8s/frontend.yaml'
+            sh 'kubectl apply -f k8s/hpa.yaml'
 
             echo 'Kubernetes deployment completed'
         }
