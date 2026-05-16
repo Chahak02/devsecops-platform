@@ -229,22 +229,92 @@ const deployCmd = `kubectl apply -f ${tempPath} -n devsecops-prod`;
     }
 });
 
+// app.delete('/api/projects/:id', authenticateToken, async (req, res) => {
+//     try {
+//         console.log(`🗑️ Attempting to delete project: ${req.params.id} for user: ${req.user.id}`);
+//         const project = await Project.findOneAndDelete({ _id: req.params.id, owner: req.user.id });
+//         if (!project) {
+//             console.warn(`❌ Project not found or unauthorized: ${req.params.id}`);
+//             return res.status(404).json({ message: 'Project not found' });
+//         }
+//         console.log(`✅ Successfully deleted project: ${req.params.id}`);
+//         res.json({ message: 'Project deleted successfully' });
+//     } catch (error) {
+//         console.error(`🔥 Deletion error: ${error.message}`);
+//         res.status(500).json({ message: 'Deletion failed' });
+//     }
+// });
 app.delete('/api/projects/:id', authenticateToken, async (req, res) => {
     try {
-        console.log(`🗑️ Attempting to delete project: ${req.params.id} for user: ${req.user.id}`);
-        const project = await Project.findOneAndDelete({ _id: req.params.id, owner: req.user.id });
+
+        console.log(`🗑️ Attempting to delete project: ${req.params.id}`);
+
+        const project = await Project.findOne({
+            _id: req.params.id,
+            owner: req.user.id
+        });
+
         if (!project) {
-            console.warn(`❌ Project not found or unauthorized: ${req.params.id}`);
-            return res.status(404).json({ message: 'Project not found' });
+            return res.status(404).json({
+                message: 'Project not found'
+            });
         }
-        console.log(`✅ Successfully deleted project: ${req.params.id}`);
-        res.json({ message: 'Project deleted successfully' });
+
+        const shortId = project._id.toString().slice(-5);
+
+        const deploymentName = `proj-${shortId}`;
+        const serviceName = `proj-${shortId}-service`;
+
+        // Delete Kubernetes deployment + service
+        try {
+
+            execSync(
+                `kubectl delete deployment ${deploymentName} -n devsecops-prod --ignore-not-found=true`
+            );
+
+            execSync(
+                `kubectl delete service ${serviceName} -n devsecops-prod --ignore-not-found=true`
+            );
+
+            console.log(`✅ Kubernetes resources deleted`);
+
+        } catch (k8sError) {
+
+            console.error('Kubernetes cleanup failed:', k8sError.message);
+        }
+
+        // Kill port-forward process using project port
+        try {
+
+            execSync(
+                `lsof -ti tcp:${project.port} | xargs kill -9`
+            );
+
+            console.log(`✅ Port-forward killed on ${project.port}`);
+
+        } catch (pfError) {
+
+            console.log('No active port-forward found');
+        }
+
+        // Delete MongoDB entry
+        await Project.findByIdAndDelete(project._id);
+
+        console.log(`✅ Project fully deleted`);
+
+        res.json({
+            message: 'Project deleted successfully'
+        });
+
     } catch (error) {
-        console.error(`🔥 Deletion error: ${error.message}`);
-        res.status(500).json({ message: 'Deletion failed' });
+
+        console.error('🔥 Deletion error:', error.message);
+
+        res.status(500).json({
+            message: 'Deletion failed'
+        });
     }
 });
-
 // --- Dashboard Stats ---
 app.get('/api/stats', authenticateToken, async (req, res) => {
     try {
