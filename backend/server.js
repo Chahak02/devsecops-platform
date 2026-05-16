@@ -73,10 +73,25 @@ const ProjectSchema = new mongoose.Schema({
         vulnerabilities: { type: Number, default: 0 },
         codeSmells: { type: Number, default: 0 }
     },
+    // trivyResults: {
+    //     critical: { type: Number, default: 0 },
+    //     high: { type: Number, default: 0 },
+    //     medium: { type: Number, default: 0 }
+    // }
     trivyResults: {
         critical: { type: Number, default: 0 },
         high: { type: Number, default: 0 },
         medium: { type: Number, default: 0 }
+    },
+    
+    sonarReportUrl: {
+        type: String,
+        default: ''
+    },
+    
+    trivyReportUrl: {
+        type: String,
+        default: ''
     }
 });
 
@@ -101,7 +116,9 @@ const authenticateToken = (req, res, next) => {
 // Note: This endpoint is public for Jenkins but should be secured with a token in production
 app.post('/api/webhook/jenkins', async (req, res) => {
     try {
-        const { projectId, status, sonar, trivy } = req.body;
+        // const { projectId, status, sonar, trivy } = req.body;
+        const {
+            projectId, status, sonar, trivy, sonarReportUrl,trivyReportUrl} = req.body;
         console.log(`🔔 Jenkins Webhook Received: Project ${projectId} -> ${status}`);
 
         const project = await Project.findById(projectId);
@@ -111,6 +128,11 @@ app.post('/api/webhook/jenkins', async (req, res) => {
         project.lastBuild = new Date();
         if (sonar) project.sonarResults = sonar;
         if (trivy) project.trivyResults = trivy;
+        if (sonarReportUrl)
+            project.sonarReportUrl = sonarReportUrl;
+        
+        if (trivyReportUrl)
+            project.trivyReportUrl = trivyReportUrl;
 
         await project.save();
         res.json({ message: 'Status updated successfully' });

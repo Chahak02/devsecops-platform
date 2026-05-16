@@ -27,21 +27,45 @@ const Security = () => {
   };
 
   // Map the real security data from the project objects
+  // const securityData = projects.map((project) => ({
+  //   id: project._id,
+  //   project: project.name,
+  //   sonarQube: project.sonarResults || { 
+  //     status: 'N/A', 
+  //     bugs: 0, 
+  //     vulnerabilities: 0, 
+  //     codeSmells: 0 
+  //   },
+  //   trivy: project.trivyResults || { 
+  //     critical: 0, 
+  //     high: 0, 
+  //     medium: 0 
+  //   },
+  //   lastScan: project.lastBuild ? new Date(project.lastBuild).toLocaleTimeString() : 'Never'
+  // }));
   const securityData = projects.map((project) => ({
     id: project._id,
     project: project.name,
-    sonarQube: project.sonarResults || { 
-      status: 'N/A', 
-      bugs: 0, 
-      vulnerabilities: 0, 
-      codeSmells: 0 
+  
+    sonarQube: project.sonarResults || {
+      status: 'N/A',
+      bugs: 0,
+      vulnerabilities: 0,
+      codeSmells: 0
     },
-    trivy: project.trivyResults || { 
-      critical: 0, 
-      high: 0, 
-      medium: 0 
+  
+    trivy: project.trivyResults || {
+      critical: 0,
+      high: 0,
+      medium: 0
     },
-    lastScan: project.lastBuild ? new Date(project.lastBuild).toLocaleTimeString() : 'Never'
+  
+    sonarReportUrl: project.sonarReportUrl || '',
+    trivyReportUrl: project.trivyReportUrl || '',
+  
+    lastScan: project.lastBuild
+      ? new Date(project.lastBuild).toLocaleTimeString()
+      : 'Never'
   }));
 
   return (
@@ -113,12 +137,37 @@ const Security = () => {
               </div>
 
               <div className="card-footer">
-                <button className="btn btn-secondary btn-sm">
+                {/* <button className="btn btn-secondary btn-sm">
                   Full Sonar Report <ExternalLink size={14} />
                 </button>
                 <button className="btn btn-secondary btn-sm">
                   Trivy Details <ExternalLink size={14} />
-                </button>
+                </button> */}
+                <button
+  className="btn btn-secondary btn-sm"
+  onClick={() => {
+    if (report.sonarReportUrl) {
+      window.open(report.sonarReportUrl, '_blank');
+    } else {
+      alert('No Sonar report available');
+    }
+  }}
+>
+  Full Sonar Report <ExternalLink size={14} />
+</button>
+
+<button
+  className="btn btn-secondary btn-sm"
+  onClick={() => {
+    if (report.trivyReportUrl) {
+      window.open(report.trivyReportUrl, '_blank');
+    } else {
+      alert('No Trivy report available');
+    }
+  }}
+>
+  Trivy Details <ExternalLink size={14} />
+</button>
               </div>
             </div>
           ))}

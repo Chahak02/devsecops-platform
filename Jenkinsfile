@@ -73,14 +73,37 @@ pipeline {
         success {
             script {
                 echo "✅ Build Successful. Notifying Dashboard..."
+                // def payload = """
+                // {
+                //     "projectId": "${params.PROJECT_ID}",
+                //     "status": "Deployed",
+                //     "sonar": { "status": "Passed", "bugs": 2, "vulnerabilities": 0, "codeSmells": 15 },
+                //     "trivy": { "critical": 0, "high": 1, "medium": 4 }
+                // }
+                // """
                 def payload = """
-                {
-                    "projectId": "${params.PROJECT_ID}",
-                    "status": "Deployed",
-                    "sonar": { "status": "Passed", "bugs": 2, "vulnerabilities": 0, "codeSmells": 15 },
-                    "trivy": { "critical": 0, "high": 1, "medium": 4 }
-                }
-                """
+{
+    "projectId": "${params.PROJECT_ID}",
+    "status": "Deployed",
+
+    "sonar": {
+        "status": "Passed",
+        "bugs": 2,
+        "vulnerabilities": 0,
+        "codeSmells": 15
+    },
+
+    "trivy": {
+        "critical": 0,
+        "high": 1,
+        "medium": 4
+    },
+
+    "sonarReportUrl": "https://sonarcloud.io/project/overview?id=chahak02_devsecops-platform",
+
+    "trivyReportUrl": "https://trivy.dev/latest/"
+}
+"""
                 sh "curl -X POST -H 'Content-Type: application/json' -d '${payload}' http://host.docker.internal:5000/api/webhook/jenkins"
             }
         }
