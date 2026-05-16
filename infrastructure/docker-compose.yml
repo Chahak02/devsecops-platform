@@ -19,7 +19,7 @@ services:
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./reports:/reports
+      - /Users/veeralagarwal/Documents/CourseProjects/ssp/devsecops-platform/infrastructure/reports:/reports
 
     restart: unless-stopped
 
