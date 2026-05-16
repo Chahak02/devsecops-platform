@@ -40,25 +40,101 @@ pipeline {
             }
         }
 
-        stage('Containerize') {
-            steps {
-                echo 'Building Docker Images...'
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
-                    // sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-                    // sh 'docker build -t $DOCKER_USER/devsecops-backend:latest ./backend'
-                    // sh 'docker build -t $DOCKER_USER/devsecops-frontend:latest ./frontend'
-                    echo "Simulating Docker push to Hub..."
-                }
-            }
-        }
+        // stage('Containerize') {
+        //     steps {
+        //         echo 'Building Docker Images...'
+        //         withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
+        //             // sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+        //             // sh 'docker build -t $DOCKER_USER/devsecops-backend:latest ./backend'
+        //             // sh 'docker build -t $DOCKER_USER/devsecops-frontend:latest ./frontend'
+        //             echo "Simulating Docker push to Hub..."
+        //         }
+        //     }
+        // }
+       stage('Containerize') {
+    steps {
+        script {
 
-        stage('Trivy Image Scan') {
-            steps {
-                echo 'Scanning Docker Images for vulnerabilities...'
-                // Simulate Trivy output
-                sh 'echo "Trivy Scan: 0 Critical, 2 High, 5 Medium"'
-            }
+            echo 'Building Backend Docker Image...'
+
+            sh """
+            docker build -t chahak02/devsecops-backend:${BUILD_NUMBER} ./backend
+            """
+
+            echo 'Building Frontend Docker Image...'
+
+            sh """
+            docker build -t chahak02/devsecops-frontend:${BUILD_NUMBER} ./frontend
+            """
+
+            echo 'Docker images built successfully'
         }
+    }
+}
+
+       
+    //    stage('Trivy Image Scan') {
+    // steps {
+    //     script {
+
+    //         echo 'Running REAL Trivy scans...'
+
+    //         sh 'mkdir -p reports'
+
+    //         sh """
+    //         trivy image \
+    //         --severity HIGH,CRITICAL \
+    //         --format table \
+    //         chahak02/devsecops-backend:${BUILD_NUMBER}
+    //         """
+
+    //         sh """
+    //         trivy image \
+    //         --severity HIGH,CRITICAL \
+    //         --format template \
+    //         --template "@contrib/html.tpl" \
+    //         -o reports/trivy-backend-report.html \
+    //         chahak02/devsecops-backend:${BUILD_NUMBER}
+    //         """
+
+    //         sh """
+    //         trivy image \
+    //         --severity HIGH,CRITICAL \
+    //         --format template \
+//             --template "@contrib/html.tpl" \
+//             -o reports/trivy-frontend-report.html \
+//             chahak02/devsecops-frontend:${BUILD_NUMBER}
+//             """
+
+//             echo 'Real Trivy scans completed'
+//         }
+//     }
+// }
+stage('Trivy Image Scan') {
+    steps {
+        script {
+
+            echo 'Running REAL Trivy scan...'
+
+            sh 'mkdir -p reports'
+            sh 'mkdir -p contrib'
+
+            sh '''
+            wget -q https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl -O contrib/html.tpl || true
+            '''
+
+            sh """
+            trivy image \
+            --format template \
+            --template "@contrib/html.tpl" \
+            -o reports/trivy-${params.PROJECT_ID}.html \
+            chahak02/devsecops-backend:${BUILD_NUMBER}
+            """
+
+            echo 'Real Trivy report generated'
+        }
+    }
+}
 
         stage('Deploy to Kubernetes') {
             steps {
@@ -101,7 +177,7 @@ pipeline {
 
     "sonarReportUrl": "https://sonarcloud.io/project/overview?id=chahak02_devsecops-platform",
 
-    "trivyReportUrl": "https://trivy.dev/latest/"
+    "trivyReportUrl": "http://localhost:5000/reports/trivy-${params.PROJECT_ID}.html"
 }
 """
                 sh "curl -X POST -H 'Content-Type: application/json' -d '${payload}' http://host.docker.internal:5000/api/webhook/jenkins"
