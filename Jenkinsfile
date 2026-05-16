@@ -116,7 +116,7 @@ stage('Trivy Image Scan') {
 
             echo 'Running REAL Trivy scan...'
 
-            sh 'mkdir -p reports'
+            // sh 'mkdir -p reports'
             sh 'mkdir -p contrib'
 
             sh '''
@@ -127,16 +127,16 @@ stage('Trivy Image Scan') {
             trivy image \
             --format template \
             --template "@contrib/html.tpl" \
-            -o reports/trivy-${params.PROJECT_ID}.html \
+            -o /reports/trivy-${params.PROJECT_ID}.html \
             chahak02/devsecops-backend:${BUILD_NUMBER}
             """
 
             echo 'Real Trivy report generated'
 
-            sh """
-mkdir -p /var/jenkins_home/reports
-cp reports/trivy-${params.PROJECT_ID}.html /reports/
-"""
+//             sh """
+// mkdir -p /var/jenkins_home/reports
+// cp /reports/trivy-${params.PROJECT_ID}.html /reports/
+// """
         }
     }
 }
