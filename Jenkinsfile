@@ -173,7 +173,7 @@ stage('Trivy Image Scan') {
 
     "sonarReportUrl": "https://sonarcloud.io/project/overview?id=chahak02_devsecops-platform",
 
-    "trivyReportUrl": "http://localhost:5000/reports/trivy-${params.PROJECT_ID}.html"
+    "trivyReportUrl": "http://localhost:5000/reports/trivy-${params.PROJECT_ID}.html",
 
     "liveUrl": "http://192.168.49.2:30100"
 }
@@ -194,4 +194,5 @@ stage('Trivy Image Scan') {
             }
         }
     }
+}
 }
