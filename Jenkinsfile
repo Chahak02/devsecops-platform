@@ -118,10 +118,6 @@ stage('Trivy Image Scan') {
 
             echo 'Real Trivy report generated'
 
-//             sh """
-// mkdir -p /var/jenkins_home/reports
-// cp /reports/trivy-${params.PROJECT_ID}.html /reports/
-// """
         }
     }
 }
@@ -140,7 +136,7 @@ stage('Trivy Image Scan') {
         }
     }
 }
-
+}
     post {
         success {
             script {
@@ -194,5 +190,4 @@ stage('Trivy Image Scan') {
             }
         }
     }
-}
 }
