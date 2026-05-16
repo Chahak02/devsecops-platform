@@ -132,6 +132,11 @@ stage('Trivy Image Scan') {
             """
 
             echo 'Real Trivy report generated'
+
+            sh """
+mkdir -p /var/jenkins_home/reports
+cp reports/trivy-${params.PROJECT_ID}.html /var/jenkins_home/reports/
+"""
         }
     }
 }
