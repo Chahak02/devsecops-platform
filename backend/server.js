@@ -99,6 +99,11 @@ const ProjectSchema = new mongoose.Schema({
     trivyReportUrl: {
         type: String,
         default: ''
+    },
+
+    liveUrl: {
+        type: String,
+        default: ''
     }
 });
 
@@ -125,7 +130,7 @@ app.post('/api/webhook/jenkins', async (req, res) => {
     try {
         // const { projectId, status, sonar, trivy } = req.body;
         const {
-            projectId, status, sonar, trivy, sonarReportUrl,trivyReportUrl} = req.body;
+            projectId, status, sonar, trivy, sonarReportUrl,trivyReportUrl,liveUrl} = req.body;
         console.log(`🔔 Jenkins Webhook Received: Project ${projectId} -> ${status}`);
 
         const project = await Project.findById(projectId);
@@ -140,6 +145,9 @@ app.post('/api/webhook/jenkins', async (req, res) => {
         
         if (trivyReportUrl)
             project.trivyReportUrl = trivyReportUrl;
+
+        if (liveUrl)
+            project.liveUrl = liveUrl;
 
         await project.save();
         res.json({ message: 'Status updated successfully' });
@@ -258,21 +266,6 @@ const deployCmd = `kubectl apply -f ${tempPath} -n devsecops-prod`;
     }
 });
 
-// app.delete('/api/projects/:id', authenticateToken, async (req, res) => {
-//     try {
-//         console.log(`🗑️ Attempting to delete project: ${req.params.id} for user: ${req.user.id}`);
-//         const project = await Project.findOneAndDelete({ _id: req.params.id, owner: req.user.id });
-//         if (!project) {
-//             console.warn(`❌ Project not found or unauthorized: ${req.params.id}`);
-//             return res.status(404).json({ message: 'Project not found' });
-//         }
-//         console.log(`✅ Successfully deleted project: ${req.params.id}`);
-//         res.json({ message: 'Project deleted successfully' });
-//     } catch (error) {
-//         console.error(`🔥 Deletion error: ${error.message}`);
-//         res.status(500).json({ message: 'Deletion failed' });
-//     }
-// });
 app.delete('/api/projects/:id', authenticateToken, async (req, res) => {
     try {
 
