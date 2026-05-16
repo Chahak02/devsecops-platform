@@ -20,7 +20,8 @@ app.use(express.json());
 app.use(cors());
 app.use(helmet());
 app.use(morgan('dev'));
-app.use('/reports', express.static('/var/jenkins_home/reports'));
+app.use('/reports', express.static('/reports'));
+// app.use('/reports', express.static('/var/jenkins_home/reports'));
 
 // MongoDB Connection
 mongoose.connect(MONGO_URI)
