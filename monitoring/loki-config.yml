@@ -1,11 +1,11 @@
-auth_enabled: false
+auth_enabled: false    #no login password required
 
 server:
-  http_listen_port: 3100
+  http_listen_port: 3100  
 
 common:
   path_prefix: /tmp/loki
-  storage:
+  storage:               #save logs on disk
     filesystem:
       chunks_directory: /tmp/loki/chunks
       rules_directory: /tmp/loki/rules

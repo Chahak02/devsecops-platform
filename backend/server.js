@@ -29,10 +29,10 @@ app.use(
 // MongoDB Connection
 mongoose.connect(MONGO_URI)
     .then(() => {
-        console.log('✅ Connected to MongoDB');
-        restorePortForwards();
+        console.log(' Connected to MongoDB');
+        // restorePortForwards();
     })
-    .catch(err => console.error('❌ MongoDB connection error:', err));
+    .catch(err => console.error(' MongoDB connection error:', err));
 
 const { exec } = require('child_process');
 
@@ -40,7 +40,7 @@ const { exec } = require('child_process');
 const restorePortForwards = async () => {
     try {
         const projects = await Project.find({ port: { $exists: true } });
-        console.log(`🔄 Attempting to restore ${projects.length} project tunnels...`);
+        console.log(` Attempting to restore ${projects.length} project tunnels...`);
         
         projects.forEach(project => {
             const svcName = `proj-${project._id.toString().slice(-5)}-service`;
@@ -50,10 +50,10 @@ const restorePortForwards = async () => {
                 // If it fails, it usually means the port is already in use (which is fine) or the pod is dead
                 if (err) { /* ignore */ }
             });
-            console.log(`🔌 Tunneled ${project.name} -> http://localhost:${project.port}`);
+            console.log(` Tunneled ${project.name} -> http://localhost:${project.port}`);
         });
     } catch (error) {
-        console.error('❌ Failed to restore port forwards:', error.message);
+        console.error(' Failed to restore port forwards:', error.message);
     }
 };
 
@@ -131,7 +131,7 @@ app.post('/api/webhook/jenkins', async (req, res) => {
         // const { projectId, status, sonar, trivy } = req.body;
         const {
             projectId, status, sonar, trivy, sonarReportUrl,trivyReportUrl,liveUrl} = req.body;
-        console.log(`🔔 Jenkins Webhook Received: Project ${projectId} -> ${status}`);
+        console.log(` Jenkins Webhook Received: Project ${projectId} -> ${status}`);
 
         const project = await Project.findById(projectId);
         if (!project) return res.status(404).json({ message: 'Project not found' });
@@ -228,23 +228,41 @@ fs.writeFileSync(tempPath, yaml);
 
 const deployCmd = `kubectl apply -f ${tempPath} -n devsecops-prod`;
                         
-        exec(deployCmd, (err, stdout, stderr) => {
+        // exec(deployCmd, (err, stdout, stderr) => {
+            exec(deployCmd, async (err, stdout, stderr) => {
 
     if (err) {
-        console.error('❌ IaC Provisioning failed');
+        console.error(' IaC Provisioning failed');
         console.error('ERROR:', err);
         console.error('STDERR:', stderr);
     } else {
 
-        console.log('✅ IaC Provisioning success');
+        console.log(' IaC Provisioning success');
         console.log(stdout);
+        const svcJson = execSync(
+            `kubectl get svc ${projectName}-service -n devsecops-prod -o json`
+          ).toString();
+          
+          const svc = JSON.parse(svcJson);
+          
+          const nodePort = svc.spec.ports[0].nodePort;
+          
+          const minikubeIp = execSync('minikube ip')
+            .toString()
+            .trim();
+          
+          const liveUrl = `http://${minikubeIp}:${nodePort}`;
+          
+          console.log(` Live URL: ${liveUrl}`);
+          
+          project.liveUrl = liveUrl;
+          await project.save();
+        // const pfCmd =
+        //   `kubectl port-forward svc/${projectName}-service ${nextPort}:80 -n devsecops-prod &`;
 
-        const pfCmd =
-          `kubectl port-forward svc/${projectName}-service ${nextPort}:80 -n devsecops-prod &`;
+        // exec(pfCmd);
 
-        exec(pfCmd);
-
-        console.log(`🚀 Tunnel opened on http://localhost:${nextPort}`);
+        // console.log(` Tunnel opened on http://localhost:${nextPort}`);
     }
 });
 
@@ -269,7 +287,7 @@ const deployCmd = `kubectl apply -f ${tempPath} -n devsecops-prod`;
 app.delete('/api/projects/:id', authenticateToken, async (req, res) => {
     try {
 
-        console.log(`🗑️ Attempting to delete project: ${req.params.id}`);
+        console.log(` Attempting to delete project: ${req.params.id}`);
 
         const project = await Project.findOne({
             _id: req.params.id,
@@ -298,7 +316,7 @@ app.delete('/api/projects/:id', authenticateToken, async (req, res) => {
                 `kubectl delete service ${serviceName} -n devsecops-prod --ignore-not-found=true`
             );
 
-            console.log(`✅ Kubernetes resources deleted`);
+            console.log(` Kubernetes resources deleted`);
 
         } catch (k8sError) {
 
@@ -312,7 +330,7 @@ app.delete('/api/projects/:id', authenticateToken, async (req, res) => {
                 `lsof -ti tcp:${project.port} | xargs kill -9`
             );
 
-            console.log(`✅ Port-forward killed on ${project.port}`);
+            console.log(` Port-forward killed on ${project.port}`);
 
         } catch (pfError) {
 
@@ -322,7 +340,7 @@ app.delete('/api/projects/:id', authenticateToken, async (req, res) => {
         // Delete MongoDB entry
         await Project.findByIdAndDelete(project._id);
 
-        console.log(`✅ Project fully deleted`);
+        console.log(`Project fully deleted`);
 
         res.json({
             message: 'Project deleted successfully'
@@ -330,7 +348,7 @@ app.delete('/api/projects/:id', authenticateToken, async (req, res) => {
 
     } catch (error) {
 
-        console.error('🔥 Deletion error:', error.message);
+        console.error(' Deletion error:', error.message);
 
         res.status(500).json({
             message: 'Deletion failed'
@@ -445,4 +463,4 @@ app.get('/api/logs/:projectName', async (req, res) => {
     }
 });
            
-app.listen(PORT, () => console.log(`🚀 Production backend running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(` Production backend running on http://localhost:${PORT}`));

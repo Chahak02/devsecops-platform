@@ -40,17 +40,7 @@ pipeline {
             }
         }
 
-        // stage('Containerize') {
-        //     steps {
-        //         echo 'Building Docker Images...'
-        //         withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
-        //             // sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-        //             // sh 'docker build -t $DOCKER_USER/devsecops-backend:latest ./backend'
-        //             // sh 'docker build -t $DOCKER_USER/devsecops-frontend:latest ./frontend'
-        //             echo "Simulating Docker push to Hub..."
-        //         }
-        //     }
-        // }
+        
       stage('Containerize') {
     steps {
         script {
@@ -140,15 +130,7 @@ stage('Trivy Image Scan') {
     post {
         success {
             script {
-                echo "✅ Build Successful. Notifying Dashboard..."
-                // def payload = """
-                // {
-                //     "projectId": "${params.PROJECT_ID}",
-                //     "status": "Deployed",
-                //     "sonar": { "status": "Passed", "bugs": 2, "vulnerabilities": 0, "codeSmells": 15 },
-                //     "trivy": { "critical": 0, "high": 1, "medium": 4 }
-                // }
-                // """
+                echo " Build Successful. Notifying Dashboard..."
                 def payload = """
 {
     "projectId": "${params.PROJECT_ID}",
@@ -179,7 +161,7 @@ stage('Trivy Image Scan') {
         }
         failure {
             script {
-                echo "❌ Build Failed. Notifying Dashboard..."
+                echo " Build Failed. Notifying Dashboard..."
                 def payload = """
                 {
                     "projectId": "${params.PROJECT_ID}",
